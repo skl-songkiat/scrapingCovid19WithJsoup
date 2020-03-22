@@ -7,16 +7,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class App 
-{
+public class App {
 	
 	static int count_sum1 = 0;
 	static int count_new1 = 0;
 	static int count_sum2 = 0;
 	static int count_new2 = 0;
 	
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws Exception{
         try {
         	Document doc = Jsoup.connect("https://ddc.moph.go.th/viralpneumonia/").get();
         	System.out.printf("Title: %s\n", doc.title());
@@ -133,5 +131,8 @@ public class App
         }catch (IOException e) {
         	e.printStackTrace();
         }
+        
+        MySqlAccess dao = new MySqlAccess();
+        dao.readDataBase();
     }
 }
