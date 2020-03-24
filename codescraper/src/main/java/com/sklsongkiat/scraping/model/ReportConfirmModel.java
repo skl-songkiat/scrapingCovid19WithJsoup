@@ -1,4 +1,4 @@
-package com.sklsongkiat.scraping.model;
+package com.sklsongkiat.scraping.Model;
 
 public class ReportConfirmModel {
 	

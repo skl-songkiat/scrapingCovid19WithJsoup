@@ -1,4 +1,4 @@
-package com.sklsongkiat.scraping;
+package com.sklsongkiat.scraping.Helper;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.sklsongkiat.scraping.model.ReportConfirmModel;
+import com.sklsongkiat.scraping.Model.ReportConfirmModel;
 
 public class MySqlAccess {
 

@@ -1,4 +1,4 @@
-package com.sklsongkiat.scraping;
+package com.sklsongkiat.scraping.Controller;
 
 import java.io.IOException;
 
@@ -7,7 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sklsongkiat.scraping.model.ReportConfirmModel;
+import com.sklsongkiat.scraping.Helper.MySqlAccess;
+import com.sklsongkiat.scraping.Model.ReportConfirmModel;
 
 public class App {
 	
