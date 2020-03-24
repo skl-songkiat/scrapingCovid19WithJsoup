@@ -7,6 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.sklsongkiat.scraping.model.ReportConfirmModel;
+
 public class App {
 	
 	static int count_sum1 = 0;
@@ -15,6 +17,10 @@ public class App {
 	static int count_new2 = 0;
 	
     public static void main( String[] args ) throws Exception{
+    	
+    	MySqlAccess dao = new MySqlAccess();
+    	ReportConfirmModel reportModel = new ReportConfirmModel();
+        
         try {
         	Document doc = Jsoup.connect("https://ddc.moph.go.th/viralpneumonia/").get();
         	System.out.printf("Title: %s\n", doc.title());
@@ -30,6 +36,8 @@ public class App {
                 System.out.println("\t" + covid19ThTitle);
                 System.out.println("\t" + covid19ThDateTime);
                 System.out.println("\n");
+                
+                reportModel.setDate(covid19ThDateTime);
                 
                 String covid19ThPatiantHeader = covid19Th.getElementsByClass("popup_head").text();
                 String[] split_header = covid19ThPatiantHeader.split(" ");
@@ -51,21 +59,26 @@ public class App {
                         		
                         		if(split_subheaded.equals("สะสม") && count_sum1 == 0) {
                             		System.out.println("\t" + split_subheaded + " = " + split_NumPatiant[0] + ", ");
+                            		reportModel.setSummery(split_NumPatiant[0]);
                             		count_sum1++;
                                     break;
                             	}else if(split_subheaded.equals("รายใหม่") && count_new1 == 0) {
                             		System.out.println("\t" + split_subheaded + " = " + split_NumPatiant[1] + ", ");
+                            		reportModel.setNew(split_NumPatiant[1]);
                             		count_new1++;
                                     break;
                             	}else if(split_subheaded.equals("รุนแรง")) {
                             		System.out.println("\t" + split_subheaded + " = " + split_NumPatiant[2] + ", ");
-                                    break;
+                            		reportModel.setComa(split_NumPatiant[2]);
+                            		break;
                             	}else if(split_subheaded.equals("เสียชีวิต")) {
                             		System.out.println("\t" + split_subheaded + " = " + split_NumPatiant[3] + ", ");
-                                    break;
+                            		reportModel.setDied(split_NumPatiant[3]);
+                            		break;
                             	}else if(split_subheaded.equals("กลับบ้านแล้ว")) {
                             		System.out.println("\t" + split_subheaded + " = " + split_NumPatiant[4] + ", ");
-                                    break;
+                            		reportModel.setGoHome(split_NumPatiant[4]);
+                            		break;
                             	}
                             }
                         }
@@ -128,11 +141,12 @@ public class App {
                 }
         	}
         	
+        	dao.writeDataBase(reportModel);
+        	dao.readDataBase();
+        	
         }catch (IOException e) {
         	e.printStackTrace();
         }
         
-        MySqlAccess dao = new MySqlAccess();
-        dao.readDataBase();
     }
 }

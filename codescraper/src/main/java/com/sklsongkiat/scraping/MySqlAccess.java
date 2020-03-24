@@ -1,23 +1,26 @@
 package com.sklsongkiat.scraping;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.sklsongkiat.scraping.model.ReportConfirmModel;
+
 public class MySqlAccess {
 
 //	
 //	CREATE TABLE report_confirm (
 //		   id_report INT NOT NULL AUTO_INCREMENT,
-//		   datetime_report_confirm DATETIME NOT NULL,
-//		   sum_report_confirm INT(10) NOT NULL,
-//		   new_report_confirm INT(10) NOT NULL,
-//		   coma_report_confirm INT(10) NOT NULL,
-//		   died_report_confirm INT(10) NOT NULL,
-//		   gohome_report_confirm INT(10) NOT NULL,
+//		   datetime_report_confirm VARCHAR(50) CHARACTER SET utf8 NOT NULL,
+//		   sum_report_confirm VARCHAR(20) NOT NULL,
+//		   new_report_confirm VARCHAR(20) NOT NULL,
+//		   coma_report_confirm VARCHAR(20) NOT NULL,
+//		   died_report_confirm VARCHAR(20) NOT NULL,
+//		   gohome_report_confirm VARCHAR(20) NOT NULL,
 //		   PRIMARY KEY (id_report)
 //		   );
 	
@@ -33,25 +36,45 @@ public class MySqlAccess {
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
+    private ReportConfirmModel reportModel = null;
+    
+    public MySqlAccess() {
+    	try {
+    		connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_covid19?user=root&password=sklsongkiat");
+    	}catch (Exception ex){
+    		System.out.println("SQLException: " + ex.getMessage());
+    	}
+    }
 	
 	public void readDataBase() throws Exception {
 		
-		try {
-			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_covid19?user=root&password=sklsongkiat");
+		statement = connect.createStatement();
+		resultSet = statement.executeQuery("select * from report_confirm");
+		readResultSet(resultSet);
 			
-			statement = connect.createStatement();
-			resultSet = statement.executeQuery("select * from report_confirm");
-			
-			System.out.println("resultSet = " + resultSet);
-			writeResultSet(resultSet);
-		}catch (SQLException ex){
-			System.out.println("SQLException: " + ex.getMessage());
-		    System.out.println("SQLState: " + ex.getSQLState());
-		    System.out.println("VendorError: " + ex.getErrorCode());
-		}
+	}
+	
+	public void writeDataBase(ReportConfirmModel reportModel) throws Exception {
+		
+		this.reportModel = reportModel;
+		
+		preparedStatement = connect.prepareStatement
+				("insert into report_confirm values(default, ?, ?, ?, ?, ?, ?)");
+		insertDataSet(preparedStatement);
+		
+	}
+	
+	private void insertDataSet(PreparedStatement prepare) throws SQLException {
+		prepare.setString(1, reportModel.getDate());
+		prepare.setString(2, reportModel.getSummery());
+		prepare.setString(3, reportModel.getNew());
+		prepare.setString(4, reportModel.getComa());
+		prepare.setString(5, reportModel.getDied());
+		prepare.setString(6, reportModel.getGoHome());
+		prepare.executeUpdate();
 	}
 
-	private void writeResultSet(ResultSet resultSet)throws SQLException {
+	private void readResultSet(ResultSet resultSet)throws SQLException {
 		// TODO Auto-generated method stub
 		
 		while(resultSet.next()) {
